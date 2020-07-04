@@ -1,0 +1,374 @@
+  local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ChipsBoy/DoggoHub/master/uilibrary.lua", true))()
+
+--// MAIN LOCALS \\--
+
+local Tweens = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local char = LP.Character
+local humr = LP.Character.HumanoidRootPart
+local hum = char.Humanoid
+local VIM = game:GetService("VirtualInputManager")
+local Heartbeat = game:GetService("RunService").Heartbeat
+local uis = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Camera = workspace.CurrentCamera
+local mouse = LP:GetMouse()
+local espcolor;
+local ESP_Parts = {}
+local playerss = {}
+local currentPlayer = nil
+
+--// FUNCTIONS \\--
+
+local function CreateESPPart(places,color)
+    local ESPBou = Instance.new("BoxHandleAdornment")
+    ESPBou.AlwaysOnTop = true
+    ESPBou.ZIndex = 2
+    ESPBou.Size = places.Size + Vector3.new(0.1, 0.1, 0.1)
+    ESPBou.Transparency = 0.5
+    ESPBou.Name = "ESPPart"
+    ESPBou.Parent = places
+    ESPBou.Adornee = places
+    ESPBou.Color3 = color
+    table.insert(ESP_Parts, ESPBou)
+end
+
+local getMNearestToMouse = function()
+    local closest = nil
+    local distance = math.huge
+
+    for i,v in next, game:GetService('Players'):GetChildren() do
+        if v.Name ~= LP.Name and v.Character and v.Character:FindFirstChild('HumanoidRootPart') then
+            if v.Backpack:FindFirstChild("Knife") or workspace[v.Name]:FindFirstChild("Knife") then
+                local vec, inView = Camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+                if inView then
+                    local acuDist = (v.Character.HumanoidRootPart.Position - humr.Position).magnitude
+                    local mouseDist = (Vector2.new(mouse.X, mouse.Y)-Vector2.new(vec.X,vec.Y)).magnitude
+                    if mouseDist < distance then
+                        closest = v
+                        distance = mouseDist
+                    end
+                end
+            end
+        end
+    end
+
+    return closest
+end
+
+local getSNearestToMouse = function()
+    local closest = nil
+    local distance = math.huge
+
+    for i,v in next, game:GetService('Players'):GetChildren() do
+        if v.Name ~= LP.Name and v.Character and v.Character:FindFirstChild('HumanoidRootPart') then
+            if v.Backpack:FindFirstChild("Gun") or workspace[v.Name]:FindFirstChild("Gun") then
+                local vec, inView = Camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+                if inView then
+                    local acuDist = (v.Character.HumanoidRootPart.Position - humr.Position).magnitude
+                    local mouseDist = (Vector2.new(mouse.X, mouse.Y)-Vector2.new(vec.X,vec.Y)).magnitude
+                    if mouseDist < distance then
+                        closest = v
+                        distance = mouseDist
+                    end
+                end
+            end
+        end
+    end
+
+    return closest
+end
+
+function checkPart(obj)  
+    if (obj:IsA("Part") or obj:IsA("MeshPart")) and obj.Name~="HumanoidRootPart" then 
+        return true 
+    end 
+end
+
+function createESP(c)
+    bugfix = c:WaitForChild("Head")
+    for i,v in next, c:GetChildren() do
+        if checkPart(v) then
+            CreateESPPart(v, Color3.fromRGB(255,0,0))
+        end
+    end
+end
+
+function createPoliceESP(c)
+    bugfix = c:WaitForChild("Head")
+    for i,v in next, c:GetChildren() do
+        if checkPart(v) then
+            CreateESPPart(v, Color3.fromRGB(0,0,255))
+        end
+    end
+end
+
+function createInnocentESP(c)
+    bugfix = c:WaitForChild("Head")
+    for i,v in next, c:GetChildren() do
+        if checkPart(v) then
+            CreateESPPart(v, Color3.fromRGB(0,255,0))
+        end
+    end
+end
+
+--// SCRIPT \\--
+
+local DoggoHub = library:AddTab("Doggo Hub")
+
+local MainCheats = DoggoHub:AddCategory("Main Cheats")
+
+MainCheats:AddLabel("Murderer Aimbot")
+
+local AimbotMurderer = false
+MainCheats:AddToggle("Aimbot", false, function()
+    AimbotMurderer = not AimbotMurderer
+end)
+
+RunService.RenderStepped:Connect(function()
+    if AimbotMurderer and uis:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+        local closestplayer = getMNearestToMouse()
+        if closestplayer then
+            goal = CFrame.new(Camera.CFrame.p, closestplayer.Character.Head.Position)
+            Camera.CFrame = Camera.CFrame:lerp(goal, 0.7)
+        end
+    end
+end)
+
+MainCheats:AddLabel("Sheriff Aimbot")
+
+local AimbotSheriff = false
+MainCheats:AddToggle("Aimbot", false, function()
+    AimbotSheriff = not AimbotSheriff
+end)
+
+RunService.RenderStepped:Connect(function()
+    if AimbotSheriff and uis:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+        local closestplayer = getSNearestToMouse()
+        if closestplayer then
+            goal = CFrame.new(Camera.CFrame.p, closestplayer.Character.Head.Position)
+            Camera.CFrame = Camera.CFrame:lerp(goal, 0.7)
+        end
+    end
+end)
+
+local Visuals = DoggoHub:AddCategory("Visuals")
+
+Visuals:AddLabel("ReToggle ESP if buggy")
+
+local MurdererESP = false
+Visuals:AddToggle("Murderer ESP", false, function()
+    MurdererESP = not MurdererESP
+    if MurdererESP then
+        for i, people in next, game:GetService("Players"):GetChildren() do
+            if people ~= LP then
+                if people:FindFirstChild("Backpack") then
+                    if workspace:FindFirstChild(people.Name) then
+                        if people.Backpack:FindFirstChild("Knife") or workspace[people.Name]:FindFirstChild("Knife") then
+                            currentPlayer = people
+                            createESP(people.Character)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+local PoliceESP = false
+Visuals:AddToggle("Sheriff ESP", false, function()
+    PoliceESP = not PoliceESP
+    if PoliceESP then
+        for i, people in next, game:GetService("Players"):GetChildren() do
+            if people ~= LP then
+                if people:FindFirstChild("Backpack") then
+                    if workspace:FindFirstChild(people.Name) then
+                        if people.Backpack:FindFirstChild("Gun") or workspace[people.Name]:FindFirstChild("Gun") then
+                            currentPlayer = people
+                            createPoliceESP(people.Character)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+local PlayerESP = false
+Visuals:AddToggle("Innocent ESP", false, function()
+    PlayerESP = not PlayerESP
+    if PlayerESP then
+        for i, people in next, game:GetService("Players"):GetChildren() do
+            if people ~= LP then
+                if people:FindFirstChild("Backpack") then
+                    if workspace:FindFirstChild(people.Name) then
+                        if not people.Backpack:FindFirstChild("Gun") and not workspace[people.Name]:FindFirstChild("Gun") and not people.Backpack:FindFirstChild("Knife") and not workspace[people.Name]:FindFirstChild("Knife") then
+                            currentPlayer = people
+                            createInnocentESP(people.Character)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+--[[
+    Removing ESP if False
+]]
+
+RunService.RenderStepped:Connect(function()
+    if PlayerESP == false then
+        for i,v in next, Players:GetChildren() do
+            if v:FindFirstChild("Backpack") then
+                if workspace:FindFirstChild(v.Name) then
+                    if not v.Backpack:FindFirstChild("Knife") and not workspace[v.Name]:FindFirstChild("Knife") and not v.Backpack:FindFirstChild("Gun") and not workspace[v.Name]:FindFirstChild("Gun")then
+                        if v.Character:FindFirstChild("HumanoidRootPart") then
+                            for k,x in next, v.Character:GetChildren() do
+                                if x:IsA("Part") or x:IsA("MeshPart") then
+                                    for a,b in next, x:GetChildren() do
+                                        if x.Name == "ESPPart" then
+                                            if x.Color3 == Color3.fromRGB(0,255,0) then
+                                                x:Destroy()
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if PoliceESP == false then
+        for i,v in next, Players:GetChildren() do
+            if v:FindFirstChild("Backpack") then
+                if workspace:FindFirstChild(v.Name) then
+                    if v.Backpack:FindFirstChild("Gun") or workspace[v.Name]:FindFirstChild("Gun") then
+                        if v.Character:FindFirstChild("HumanoidRootPart") then
+                            for k,x in next, v.Character:GetChildren() do
+                                if x:IsA("Part") or x:IsA("MeshPart") then
+                                    for a,b in next, x:GetChildren() do
+                                        if x.Name == "ESPPart" then
+                                            if x.Color3 == Color3.fromRGB(0,0,255) then
+                                                x:Destroy()
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if MurdererESP == false then
+        for i,v in next, Players:GetChildren() do
+            if v:FindFirstChild("Backpack") then
+                if workspace:FindFirstChild(v.Name) then
+                    if v.Backpack:FindFirstChild("Gun") or workspace[v.Name]:FindFirstChild("Gun") then
+                        if v.Character:FindFirstChild("HumanoidRootPart") then
+                            for k,x in next, v.Character:GetChildren() do
+                                if x:IsA("Part") or x:IsA("MeshPart") then
+                                    for a,b in next, x:GetChildren() do
+                                        if x.Name == "ESPPart" then
+                                            if x.Color3 == Color3.fromRGB(255,0,0) then
+                                                x:Destroy()
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+--[[
+    // Checking if ESP is connected to someone who shouldnt have it \\
+]]
+
+RunService.RenderStepped:Connect(function()
+    --[[ 
+        // FINDING IF SHERIFF HAS A ESP THAT HE SHOULDNT HAVE \\
+    ]]
+    for i,v in next, Players:GetChildren() do
+        if v ~= LP then
+            if v:FindFirstChild("Backpack") then
+                if workspace:FindFirstChild(v.Name) then
+                    if v.Backpack:FindFirstChild("Gun") or workspace[v.Name]:FindFirstChild("Gun") then
+                        if v.Character:FindFirstChild("HumanoidRootPart") then
+                            for k,x in next, v.Character:GetChildren() do
+                                if x:IsA("Part") or x:IsA("MeshPart") then
+                                    if x:FindFirstChild("ESPPart") then
+                                        if x.ESPPart.Color3 ~= Color3.fromRGB(0,0,255) then
+                                            x.ESPPart:Destroy()
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    --[[
+        // FINDING IF MURDERER HAS A ESP THAT HE SHOULDNT HAVE \\
+    ]]
+
+    for i,v in next, Players:GetChildren() do
+        if v ~= LP then
+            if v:FindFirstChild("Backpack") then
+                if workspace:FindFirstChild(v.Name) then
+                    if v.Backpack:FindFirstChild("Knife") or workspace[v.Name]:FindFirstChild("Knife") then
+                        if v.Character:FindFirstChild("HumanoidRootPart") then
+                            for k,x in next, v.Character:GetChildren() do
+                                if x:IsA("Part") or x:IsA("MeshPart") then
+                                    if x:FindFirstChild("ESPPart") then
+                                        if x.ESPPart.Color3 ~= Color3.fromRGB(255,0,0) then
+                                            x.ESPPart:Destroy()
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    --[[
+        // FINDING IF INNOCENT HAS A ESP THAT HE SHOULDNT HAVE \\
+    ]]
+
+    for i,v in next, Players:GetChildren() do
+        if v ~= LP then
+            if v:FindFirstChild("Backpack") then
+                if workspace:FindFirstChild(v.Name) then
+                    if not v.Backpack:FindFirstChild("Knife") and not workspace[v.Name]:FindFirstChild("Knife") and not v.Backpack:FindFirstChild("Gun") and not workspace[v.Name]:FindFirstChild("Gun")then
+                        if v.Character:FindFirstChild("HumanoidRootPart") then
+                            for k,x in next, v.Character:GetChildren() do
+                                if x:IsA("Part") or x:IsA("MeshPart") then
+                                    if x:FindFirstChild("ESPPart") then
+                                        if x.ESPPart.Color3 ~= Color3.fromRGB(0,255,0) then
+                                            x.ESPPart:Destroy()
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
