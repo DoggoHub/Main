@@ -57,6 +57,29 @@ local getMNearestToMouse = function()
     return closest
 end
 
+local getINearestToMouse = function()
+    local closest = nil
+    local distance = math.huge
+
+    for i,v in next, game:GetService('Players'):GetChildren() do
+        if v.Name ~= LP.Name and v.Character and v.Character:FindFirstChild('HumanoidRootPart') then
+            if not v.Backpack:FindFirstChild("Knife") and not workspace[v.Name]:FindFirstChild("Knife") and not v.Backpack:FindFirstChild("Gun") and not workspace[v.Name]:FindFirstChild("Gun") then
+                local vec, inView = Camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+                if inView then
+                    local acuDist = (v.Character.HumanoidRootPart.Position - humr.Position).magnitude
+                    local mouseDist = (Vector2.new(mouse.X, mouse.Y)-Vector2.new(vec.X,vec.Y)).magnitude
+                    if mouseDist < distance then
+                        closest = v
+                        distance = mouseDist
+                    end
+                end
+            end
+        end
+    end
+
+    return closest
+end
+
 local getSNearestToMouse = function()
     local closest = nil
     local distance = math.huge
@@ -130,11 +153,22 @@ RunService.RenderStepped:Connect(function()
     if AimbotMurderer and uis:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
         local closestplayer = getMNearestToMouse()
         if closestplayer then
+            --local torsovector = Camera:WorldToScreenPoint(closestplayer.Character.Torso.Position) - Camera:WorldToScreenPoint(mouse.Hit.p)
+            local headvector = Camera:WorldToScreenPoint(closestplayer.Character.Head.Position) - Camera:WorldToScreenPoint(mouse.Hit.p)
+            mousemoverel(headvector.X/2, headvector.Y/2)
+        end
+    end
+end)
+
+--[[RunService.RenderStepped:Connect(function()
+    if AimbotMurderer and uis:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+        local closestplayer = getMNearestToMouse()
+        if closestplayer then
             goal = CFrame.new(Camera.CFrame.p, closestplayer.Character.Head.Position)
             Camera.CFrame = Camera.CFrame:lerp(goal, 0.7)
         end
     end
-end)
+end)]]
 
 MainCheats:AddLabel("Sheriff Aimbot")
 
@@ -147,8 +181,37 @@ RunService.RenderStepped:Connect(function()
     if AimbotSheriff and uis:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
         local closestplayer = getSNearestToMouse()
         if closestplayer then
+            --local torsovector = Camera:WorldToScreenPoint(closestplayer.Character.Torso.Position) - Camera:WorldToScreenPoint(mouse.Hit.p)
+            local headvector = Camera:WorldToScreenPoint(closestplayer.Character.Head.Position) - Camera:WorldToScreenPoint(mouse.Hit.p)
+            mousemoverel(headvector.X/2, headvector.Y/2)
+        end
+    end
+end)
+
+--[[RunService.RenderStepped:Connect(function()
+    if AimbotSheriff and uis:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+        local closestplayer = getSNearestToMouse()
+        if closestplayer then
             goal = CFrame.new(Camera.CFrame.p, closestplayer.Character.Head.Position)
             Camera.CFrame = Camera.CFrame:lerp(goal, 0.7)
+        end
+    end
+end)]]
+
+MainCheats:AddLabel("Innocent Aimbot")
+
+local AimbotInnocent = false
+MainCheats:AddToggle("Aimbot", false, function()
+    AimbotInnocent = not AimbotInnocent
+end)
+
+RunService.RenderStepped:Connect(function()
+    if AimbotInnocent and uis:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+        local closestplayer = getINearestToMouse()
+        if closestplayer then
+            --local torsovector = Camera:WorldToScreenPoint(closestplayer.Character.Torso.Position) - Camera:WorldToScreenPoint(mouse.Hit.p)
+            local headvector = Camera:WorldToScreenPoint(closestplayer.Character.Head.Position) - Camera:WorldToScreenPoint(mouse.Hit.p)
+            mousemoverel(headvector.X/2, headvector.Y/2)
         end
     end
 end)
@@ -371,4 +434,18 @@ RunService.RenderStepped:Connect(function()
             end
         end
     end
+end)
+
+game:GetService("Players").PlayerAdded:Connect(function(p)
+    p.CharacterAdded:Connect(function(character)
+        if MurdererESP then
+            createESP(character)
+        end
+        if PoliceESP then
+            createPoliceESP(character)
+        end
+        if createInnocentESP then
+            createPoliceESP(character)
+        end
+    end)
 end)
