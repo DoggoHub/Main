@@ -1,6 +1,7 @@
---[[
-    🌑 moonbrew:tm: 
-]] local n=1;local b,l,a,s,f,r,l,h,u,x,i,l,l=getfenv or function()return _ENV end,math.huge,string.byte,table.concat,string.gsub,string.sub,setmetatable,string.char,select,math.ldexp,unpack
+--[[ 
+    🌑 Doggo Hub Winning
+]]
+local n=1;local b,l,a,s,f,r,l,h,u,x,i,l,l=getfenv or function()return _ENV end,math.huge,string.byte,table.concat,string.gsub,string.sub,setmetatable,string.char,select,math.ldexp,unpack
 or table.unpack,table.insert,tonumber;local e,o,l=nil,'',{}local c,d=256,-255 local t={}for l=0,c-1 do t[l]=h(l)end local f=f('ĨĬȀĭĦȀĬŀŁŋňŝŘŞŃłŉĭǿȀŉŋĿŇĭĩȄŤŘŘŜũŇŘĭŭȄńțŜŝĖāāŞŋřĂŉŃŘńŗŎŗŝŇŞōŁłŘŇȻĂȹĿāŨŁŉŉŁŤȳŹȍłȍŉāɈŎāĿŋȊȷāŠȇňȷģȄľȑĬīɝȀɡĮȄČɣɠĬĭĬľȁĬɟȄǿɡȄɨɰɴȀɥɷɡɳɴɼɬȄƜƑƗƒƜƙƜƜƗƛʅƗƜƛƙƘƙɴ','[%z\1-\127\194-\244][\128-\191]*',function(i)local
 l,n=a(i),1 if l>=192 and l
 <254 then local e=64 l=l-128 repeat local o=a(i,n+1)or 0 if o>=128 and o
